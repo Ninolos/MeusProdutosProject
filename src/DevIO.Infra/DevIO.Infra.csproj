@@ -55,6 +55,7 @@
     <Compile Include="Data\Mappings\EnderecoConfig.cs" />
     <Compile Include="Data\Mappings\FornecedorConfig.cs" />
     <Compile Include="Data\Mappings\ProdutoConfig.cs" />
+    <Compile Include="Data\Repository\Repository.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -68,6 +69,7 @@
       <Name>DevIO.Business</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

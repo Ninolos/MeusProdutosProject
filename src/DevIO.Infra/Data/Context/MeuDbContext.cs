@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DevIO.Business.Models.Fornecedores;
 using DevIO.Business.Models.Produtos;
+using DevIO.Infra.Data.Mappings;
 
 namespace DevIO.Infra.Data.Context
 {
@@ -17,5 +18,12 @@ namespace DevIO.Infra.Data.Context
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<Endereco> Enderecos { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Configurations.Add(new FornecedorConfig());
+            modelBuilder.Configurations.Add(new EnderecoConfig());
+            modelBuilder.Configurations.Add(new ProdutoConfig());
+        }
     }
 }

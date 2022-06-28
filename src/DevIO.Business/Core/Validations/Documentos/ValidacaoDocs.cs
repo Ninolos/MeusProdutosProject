@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DevIO.Business.Core.Validations.Documentos
 {    
-        public class ValidacaoDocs
+        public class CpfValidacao
         {
             public const int TamanhoCpf = 11;
 

@@ -15,4 +15,5 @@ namespace DevIO.Business.Core.Notificacoes
 
         public string Mensagem { get; }
     }
+
 }

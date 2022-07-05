@@ -20,7 +20,7 @@ namespace DevIO.AppMvc.Controllers
     public class ProdutosController : Controller
     {
         private readonly IProdutoRepository _produtoRepository; //para fazer leitura
-        private readonly IProdutoService _produtoservice; // para fazer a persistencia dos dados
+        private readonly IProdutoService _produtoService; // para fazer a persistencia dos dados
         private readonly IMapper _mapper;
 
         public ProdutosController()
@@ -28,13 +28,14 @@ namespace DevIO.AppMvc.Controllers
             
         }
 
-        // GET: Produtos
+        [Route("lista-de-produtos")]
+        [HttpGet]
         public async Task<ActionResult> Index()
         {
             return View(await _produtoRepository.ObterTodos());
         }
 
-        // GET: Produtos/Details/5
+        [Route("dados-do-produto/{id:guid}")]
         public async Task<ActionResult> Details(Guid id)
         {
            var produtoViewModel = await ObterProduto(id);
@@ -46,15 +47,14 @@ namespace DevIO.AppMvc.Controllers
             return View(produtoViewModel);
         }
 
-        // GET: Produtos/Create
+        [Route("novo-produtos")]
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Produtos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Route("novo-produtos")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ProdutoViewModel produtoViewModel)
@@ -69,14 +69,12 @@ namespace DevIO.AppMvc.Controllers
             return View(produtoViewModel);
         }
 
-        // GET: Produtos/Edit/5
-        public async Task<ActionResult> Edit(Guid? id)
+        [Route("editar-produto/{id:guid}")]
+        [HttpGet]
+        public async Task<ActionResult> Edit(Guid id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ProdutoViewModel produtoViewModel = await db.ProdutoViewModels.FindAsync(id);
+            var produtoViewModel = await ObterProduto(id);
+
             if (produtoViewModel == null)
             {
                 return HttpNotFound();
@@ -84,30 +82,25 @@ namespace DevIO.AppMvc.Controllers
             return View(produtoViewModel);
         }
 
-        // POST: Produtos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Route("editar-produto/{id:guid}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,FornecedorId,Nome,Descricao,Imagem,Valor,DataCadastro,Ativo")] ProdutoViewModel produtoViewModel)
+        public async Task<ActionResult> Edit(ProdutoViewModel produtoViewModel)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(produtoViewModel).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                await _produtoService.Atualizar(_mapper.Map<Produto>(produtoViewModel));
                 return RedirectToAction("Index");
             }
             return View(produtoViewModel);
         }
 
-        // GET: Produtos/Delete/5
-        public async Task<ActionResult> Delete(Guid? id)
+        [Route("excluir-produto/{id:guid}")]
+        [HttpGet]
+        public async Task<ActionResult> Delete(Guid id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ProdutoViewModel produtoViewModel = await db.ProdutoViewModels.FindAsync(id);
+            
+            var produtoViewModel = await ObterProduto(id);
             if (produtoViewModel == null)
             {
                 return HttpNotFound();
@@ -115,14 +108,21 @@ namespace DevIO.AppMvc.Controllers
             return View(produtoViewModel);
         }
 
-        // POST: Produtos/Delete/5
+        [Route("excluir-produto/{id:guid}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(Guid id)
         {
-            ProdutoViewModel produtoViewModel = await db.ProdutoViewModels.FindAsync(id);
-            db.ProdutoViewModels.Remove(produtoViewModel);
-            await db.SaveChangesAsync();
+
+            var produtoViewModel = await ObterProduto(id);
+
+            if (produtoViewModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(produtoViewModel);
+
+            await _produtoService.Remover(id);
             return RedirectToAction("Index");
         }
 
@@ -136,7 +136,8 @@ namespace DevIO.AppMvc.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _produtoRepository.Dispose();
+                _produtoService.Dispose();
             }
             base.Dispose(disposing);
         }

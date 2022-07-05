@@ -13,6 +13,7 @@ using DevIO.Business.Models.Produtos;
 using DevIO.Business.Models.Produtos.Services;
 using DevIO.Infra.Data.Repository;
 using DevIO.Business.Core.Notificacoes;
+using AutoMapper;
 
 namespace DevIO.AppMvc.Controllers
 {
@@ -20,11 +21,11 @@ namespace DevIO.AppMvc.Controllers
     {
         private readonly IProdutoRepository _produtoRepository; //para fazer leitura
         private readonly IProdutoService _produtoservice; // para fazer a persistencia dos dados
+        private readonly IMapper _mapper;
 
         public ProdutosController()
         {
-            _produtoRepository = new ProdutoRepository();
-            _produtoservice = new ProdutoService(_produtoRepository, new Notificador());
+            
         }
 
         // GET: Produtos
@@ -36,7 +37,7 @@ namespace DevIO.AppMvc.Controllers
         // GET: Produtos/Details/5
         public async Task<ActionResult> Details(Guid id)
         {
-           var produto = await _produtoRepository.ObterPorId(id);
+           var produtoViewModel = await ObterProduto(id);
             
             if (produtoViewModel == null)
             {
@@ -60,7 +61,7 @@ namespace DevIO.AppMvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                _produtoRepository.Adicionar(produtoViewModel);
+                await _produtoRepository.Adicionar(_mapper.Map<Produto>(produtoViewModel));
                
                 return RedirectToAction("Index");
             }
@@ -123,6 +124,12 @@ namespace DevIO.AppMvc.Controllers
             db.ProdutoViewModels.Remove(produtoViewModel);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+        private async Task<ProdutoViewModel> ObterProduto(Guid id)
+        {
+            var produto = _mapper.Map<ProdutoViewModel>(await _produtoRepository.ObterProdutoFornecedor(id));
+            return produto;
         }
 
         protected override void Dispose(bool disposing)

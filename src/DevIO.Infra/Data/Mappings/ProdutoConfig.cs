@@ -24,7 +24,7 @@ namespace DevIO.Infra.Data.Mappings
 
             Property(c => c.Imagem)
                 .IsRequired()
-                .HasMaxLength(200);
+                .HasMaxLength(100);
 
             HasRequired(p => p.Fornecedor)
                 .WithMany(f => f.Produtos)

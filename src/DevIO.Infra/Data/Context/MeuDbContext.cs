@@ -38,5 +38,6 @@ namespace DevIO.Infra.Data.Context
 
             base.OnModelCreating(modelBuilder);
         }
+       
     }
 }

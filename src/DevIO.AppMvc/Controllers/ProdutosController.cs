@@ -134,14 +134,14 @@ namespace DevIO.AppMvc.Controllers
             return produto;
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _produtoRepository.Dispose();
-                _produtoService.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        _produtoRepository.Dispose();
+        //        _produtoService.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
     }
 }
